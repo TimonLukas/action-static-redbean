@@ -17,6 +17,8 @@ This GitHub action creates a single-file server that:
     input: "dist"
     # Fallback file (for history API-based routing), `false` to disable
     fallback: "index.html"
+    # On launch, open the users preferred browser pointing to this path, `false` to disable
+    launch: "/"
     
 
 # Example: static server for `./build/*` without fallback using redbean version x.y.z

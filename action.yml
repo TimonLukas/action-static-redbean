@@ -17,6 +17,9 @@ inputs:
   fallback:
     description: "Fallback file if asset can't be found. Set to `false` to disable."
     default: "index.html"
+  launch:
+    description: "On startup launch preferred browser pointing to this path. Set to `false` to disable."
+    default: "/"
     
 runs:
   using: "composite"
@@ -39,7 +42,13 @@ runs:
         end
         
         EOT
-        zip -qq "${{ steps.paths.outputs.executable }}" .init.lua        
+        zip -qq "${{ steps.paths.outputs.executable }}" .init.lua
+    - if: ${{ inputs.launch != false }}
+      shell: bash
+      run: |
+        unzip -qq "${{ steps.paths.outputs.executable }}" .init.lua
+        echo "LaunchBrowser('${{ inputs.launch }}')" >> .init.lua
+        zip -qq "${{ steps.paths.outputs.executable }}" .init.lua
     - run: zip -qq -r "${{ steps.paths.outputs.executable }}" ./**
       shell: bash
       working-directory: ${{ inputs.input }}

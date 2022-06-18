@@ -1,5 +1,6 @@
 name: Create static redbean server
 description: "Create a single-file cross-platform server within an executable ZIP, powered by redbean"
+
 inputs:
   version:
     description: "Redbean executable to download & use"
@@ -10,11 +11,14 @@ inputs:
   input:
     description: "Location of static files to include"
     default: "dist"
+    
 runs:
   using: "composite"
   steps:
-    - run: curl "https://redbean.dev/redbean-${{ inputs.version }}.com" >"${{ inputs.executable-name }}"
+    - run: echo "::set-output name=executable::$(pwd)/${{ inputs.input }}"
+      id: paths
+    - run: curl "https://redbean.dev/redbean-${{ inputs.version }}.com" >"${{ steps.paths.outputs.executable }}"
       shell: bash
-    - run: zip -qq -r "${{ inputs.executable-name }}" ./**
+    - run: zip -qq -r "${{ steps.paths.outputs.executable }}" ./**
       shell: bash
       working-directory: ${{ inputs.input }}

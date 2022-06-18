@@ -20,35 +20,53 @@ inputs:
   launch:
     description: "On startup launch preferred browser pointing to this path. Set to `false` to disable."
     default: "/"
+  cache:
+    description: "Cache redbean executable"
+    default: true
     
 runs:
   using: "composite"
   steps:
-    - run: echo "::set-output name=executable::$(pwd)/${{ inputs.executable-name }}"
+    - id: paths
       shell: bash
-      id: paths
-    - run: curl "https://redbean.dev/redbean-${{ inputs.version }}.com" >"${{ steps.paths.outputs.executable }}"
+      run: |
+        echo "::set-output name=executable::$(pwd)/${{ inputs.executable-name }}"
+        echo "::set-output name=temp::$(mktemp -d)"
+    - if: ${{ inputs.cache }}
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.paths.outputs.temp }}
+        key: action-static-redbean-${{ inputs.version }} }}
+    - if: ${{ !inputs.cache || steps.cache.outputs.cache-hit != 'true' }}
+      run: curl "https://redbean.dev/redbean-${{ inputs.version }}.com" >"${{ steps.paths.outputs.temp }}/redbean.com"
+      shell: bash
+    - run: cp "${{ steps.paths.outputs.temp }}/redbean.com" "${{ steps.paths.outputs.executable }}"
       shell: bash
     - if: ${{ inputs.fallback != false }}
       shell: bash
+      working-directory: ${{ steps.paths.outputs.temp }}
       run: |
-        unzip -qqo "${{ steps.paths.outputs.executable }}" .init.lua
-        cat <<EOT >> .init.lua
+        unzip -qq "${{ steps.paths.outputs.executable }}" .init.lua
         
+        cat <<EOT >> .init.lua        
         function OnHttpRequest()
             if not RoutePath() then
                 ServeAsset('${{ inputs.fallback }}')
             end
-        end
-        
+        end        
         EOT
+        
         zip -qq "${{ steps.paths.outputs.executable }}" .init.lua
+        rm .init.lua
     - if: ${{ inputs.launch != false }}
       shell: bash
+      working-directory: ${{ steps.paths.outputs.temp }}
       run: |
-        unzip -qqo "${{ steps.paths.outputs.executable }}" .init.lua
+        unzip -qq "${{ steps.paths.outputs.executable }}" .init.lua
         echo "LaunchBrowser('${{ inputs.launch }}')" >> .init.lua
         zip -qq "${{ steps.paths.outputs.executable }}" .init.lua
+        rm .init.lua
     - run: zip -qq -r "${{ steps.paths.outputs.executable }}" ./**
       shell: bash
       working-directory: ${{ inputs.input }}

@@ -16,6 +16,7 @@ runs:
   using: "composite"
   steps:
     - run: echo "::set-output name=executable::$(pwd)/${{ inputs.input }}"
+      shell: bash
       id: paths
     - run: curl "https://redbean.dev/redbean-${{ inputs.version }}.com" >"${{ steps.paths.outputs.executable }}"
       shell: bash

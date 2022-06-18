@@ -24,7 +24,8 @@ This GitHub action creates a single-file server that:
     fallback: "index.html"
     # On launch, open the users preferred browser pointing to this path, `false` to disable
     launch: "/"
-    
+    # Cache redbean executable instead of fetching every time, `false` to disable
+    cache: true
 
 # Example: static server for `./build/*` without fallback using redbean version x.y.z
 - uses: TimonLukas/action-static-redbean@v1

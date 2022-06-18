@@ -1,5 +1,5 @@
 name: Create static redbean server
-description: "Create a single-file cross-platform server within an executable ZIP, powered by redbean"
+description: "Create a single-file cross-platform server within an executable ZIP, powered by redbean 🦞"
 
 inputs:
   version:

@@ -37,7 +37,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: ${{ steps.paths.outputs.temp }}
-        key: action-static-redbean-${{ inputs.version }}-${{ hashFiles(steps.paths.outputs.temp) }}
+        key: action-static-redbean-${{ inputs.version }} }}
     - if: ${{ !inputs.cache || steps.cache.outputs.cache-hit != 'true' }}
       run: curl "https://redbean.dev/redbean-${{ inputs.version }}.com" >"${{ steps.paths.outputs.temp }}/redbean.com"
       shell: bash

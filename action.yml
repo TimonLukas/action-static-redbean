@@ -11,6 +11,9 @@ inputs:
   input:
     description: "Location of static files to include"
     default: "dist"
+  fallback:
+    description: "Fallback file if asset can't be found. Set to `false` to disable."
+    default: "index.html"
     
 runs:
   using: "composite"
@@ -20,6 +23,20 @@ runs:
       id: paths
     - run: curl "https://redbean.dev/redbean-${{ inputs.version }}.com" >"${{ steps.paths.outputs.executable }}"
       shell: bash
+    - if: ${{ inputs.fallback != false }}
+      shell: bash
+      run: |
+        unzip -qq "${{ steps.paths.outputs.executable }}" .init.lua
+        cat <<EOT >> .init.lua
+        
+        function OnHttpRequest()
+            if not RoutePath() then
+                ServeAsset('${{ inputs.fallback }}')
+            end
+        end
+        
+        EOT
+        zip -qq "${{ steps.paths.outputs.executable }}" .init.lua        
     - run: zip -qq -r "${{ steps.paths.outputs.executable }}" ./**
       shell: bash
       working-directory: ${{ inputs.input }}

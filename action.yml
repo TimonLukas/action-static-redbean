@@ -15,6 +15,6 @@ runs:
   steps:
     - run: curl "https://redbean.dev/redbean-${{ inputs.version }}.com" >"${{ inputs.executable-name }}"
       shell: bash
-    - run: zip -qq -r "${{ inputs.executable-name }}" **
+    - run: zip -qq -r "${{ inputs.executable-name }}" ./**
       shell: bash
       working-directory: ${{ inputs.input }}

@@ -1,5 +1,10 @@
 # Create static server executable - powered by redbean 🦞
 
+[![license badge](https://img.shields.io/github/license/TimonLukas/action-static-redbean)](/LICENSE)
+[![version badge](https://img.shields.io/github/v/release/TimonLukas/action-static-redbean)](https://github.com/TimonLukas/action-static-redbean/releases)
+[![release date badge](https://img.shields.io/github/release-date/TimonLukas/action-static-redbean)](https://github.com/TimonLukas/action-static-redbean/releases)
+[![issues badge](https://img.shields.io/github/issues-raw/TimonLukas/action-static-redbean)](https://github.com/TimonLukas/action-static-redbean/issues)
+
 This GitHub action creates a single-file server that:
 * runs anywhere (see [jart/cosmopolitan](https://github.com/jart/cosmopolitan))
 * serves static files (with optional fallback)

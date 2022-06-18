@@ -32,7 +32,7 @@ runs:
     - if: ${{ inputs.fallback != false }}
       shell: bash
       run: |
-        unzip -qq "${{ steps.paths.outputs.executable }}" .init.lua
+        unzip -qqo "${{ steps.paths.outputs.executable }}" .init.lua
         cat <<EOT >> .init.lua
         
         function OnHttpRequest()
@@ -46,7 +46,7 @@ runs:
     - if: ${{ inputs.launch != false }}
       shell: bash
       run: |
-        unzip -qq "${{ steps.paths.outputs.executable }}" .init.lua
+        unzip -qqo "${{ steps.paths.outputs.executable }}" .init.lua
         echo "LaunchBrowser('${{ inputs.launch }}')" >> .init.lua
         zip -qq "${{ steps.paths.outputs.executable }}" .init.lua
     - run: zip -qq -r "${{ steps.paths.outputs.executable }}" ./**

@@ -27,7 +27,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - id: paths
+    - name: Generate paths
+      id: paths
       shell: bash
       run: |
         echo "::set-output name=executable::$(pwd)/${{ inputs.executable-name }}"
@@ -37,13 +38,15 @@ runs:
       uses: actions/cache@v3
       with:
         path: ${{ steps.paths.outputs.temp }}
-        key: action-static-redbean-${{ inputs.version }} }}
+        key: action-static-redbean-${{ inputs.version }}
     - if: ${{ !inputs.cache || steps.cache.outputs.cache-hit != 'true' }}
+      name: Fetch redbean-${{ inputs.version }}.com
       run: curl "https://redbean.dev/redbean-${{ inputs.version }}.com" >"${{ steps.paths.outputs.temp }}/redbean.com"
       shell: bash
     - run: cp "${{ steps.paths.outputs.temp }}/redbean.com" "${{ steps.paths.outputs.executable }}"
       shell: bash
     - if: ${{ inputs.fallback != false }}
+      name: Add code for fallback to "${{ inputs.fallback }}"
       shell: bash
       working-directory: ${{ steps.paths.outputs.temp }}
       run: |
@@ -60,6 +63,7 @@ runs:
         zip -qq "${{ steps.paths.outputs.executable }}" .init.lua
         rm .init.lua
     - if: ${{ inputs.launch != false }}
+      name: Add code to point browser to "${{ inputs.launch }}"
       shell: bash
       working-directory: ${{ steps.paths.outputs.temp }}
       run: |
@@ -68,5 +72,6 @@ runs:
         zip -qq "${{ steps.paths.outputs.executable }}" .init.lua
         rm .init.lua
     - run: zip -qq -r "${{ steps.paths.outputs.executable }}" ./**
+      name: Add static files to executable
       shell: bash
       working-directory: ${{ inputs.input }}

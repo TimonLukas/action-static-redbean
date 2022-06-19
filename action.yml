@@ -33,14 +33,15 @@ runs:
       run: |
         echo "::set-output name=executable::$(pwd)/${{ inputs.executable-name }}"
         echo "::set-output name=temp::$(mktemp -d)"
-    - name: Create static symlink to temp directory to work around actions/cache#815
+    - if: ${{ inputs.cache }}
+      name: Create static symlink to temp directory to work around actions/cache#815
       shell: bash
       run: ln -snf ${{ steps.paths.outputs.temp }} /tmp/.action-static-redbean
     - if: ${{ inputs.cache }}
       id: cache
       uses: actions/cache@v3
       with:
-        path: /tmp/.action-static-redbean
+        path: /tmp/.action-static-redbean/redbean.com
         key: action-static-redbean-${{ inputs.version }}
     - if: ${{ !inputs.cache || steps.cache.outputs.cache-hit != 'true' }}
       name: Fetch redbean-${{ inputs.version }}.com
